@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import escapeRegExp from 'escape-string-regexp'
 import sortBy from 'sort-by'
 
-   // console.log(props.locations[0].name);
-    //console.log(props.markers.id);
-    class List extends Component {
+  
+class List extends Component {
   state={
       query:''
   }
@@ -14,6 +13,7 @@ import sortBy from 'sort-by'
           query: query
       })
   }
+
         render() {
 
            let showingRestaurant
@@ -24,37 +24,39 @@ import sortBy from 'sort-by'
            }else{
             showingRestaurant = this.props.locations
            }
+            showingRestaurant.sort(sortBy('name'))
 
-           showingRestaurant.sort(sortBy('name'))
+    
+                return(
 
-    return(
+                <div id='search'>
+                    <h2 tabIndex='0' >Luxor Egypt</h2>
+                    <div className='search-list'>
+                        <input className='search'
+                            type='text'
+                            placeholder='Search Restaurant'
+                            value={this.state.query}
+                            onChange={(event)=>this.updateQuery(event.target.value)}
+                        />
+                    <h5 tabIndex='0'>Click on Restaurant Name</h5>
+                    </div>
 
-       <div id='search'>
-          <h2>Luxor Egypt</h2>
-          <div className='search-list'>
-          <input className='search'
-                 type='text'
-                 placeholder='Search Restaurant'
-                 value={this.state.query}
-                 onChange={(event)=>this.updateQuery(event.target.value)}
-                />
-         
-          </div>
-          <ol className='list'>
-              {showingRestaurant.map((item)=> (
-                  <li   onClick={(event)=> this.props.focus(event.target)}
-                  className='item_name' 
-                  role='button'
-                  key= {item.id}
-                  >
-                      {item.name}  
-                  </li>
-              ))}
-          </ol>
-       </div>
-    )
-}
-    }
+                    <ol className='list' tabIndex='0' aria-lable='restaurant name'>
+                        {showingRestaurant.map((item)=> (
+                            <li   onClick={(event)=> this.props.focus(event.target)}
+                                className='item_name' 
+                                role='button'
+                                key= {item.id}
+                            >
+                                {item.name}  
+                            </li>
+                        ))}
+                    </ol>
+                </div>
+
+                    )
+                }
+        }
 
         
          export default List
