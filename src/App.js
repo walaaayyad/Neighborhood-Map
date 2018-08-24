@@ -12,7 +12,9 @@ class App extends Component {
     super(props);
 
   }
-  
+// Locations From API foursquar
+//https://api.foursquare.com/v2/venues/search?ll=25.6872431,32.6396357&intent=browse&radius=10000&query=restaurant&client_id=PEEZ12FJCFW01QSIIAB1LYP24CDJ0ZCJUDUVQKRFYRQKEZLG&client_secret=E3M5OUVJGXF45JGXLGLQCOHBGLYOWT2QWI2ADV2OZNFIMTWN&v=20180806
+
 state={
 markers:[],
 locations: [
@@ -75,40 +77,11 @@ locations: [
  ]
 }
 
-/*--------test part
- foursquare = require('react-foursquare')({
-  clientID: 'PEEZ12FJCFW01QSIIAB1LYP24CDJ0ZCJUDUVQKRFYRQKEZLG',
-  clientSecret: 'E3M5OUVJGXF45JGXLGLQCOHBGLYOWT2QWI2ADV2OZNFIMTWN'  
-});
-
- params = {
-  "ll": "25.6872431,32.6396357",
-  "query": 'resorts'
-};
-
-//export default class FoursquareDemo extends Component {
-
-  constructor(props) {
-     super(props);
-     this.state = {
-       locations: [],
-       markers:[]
-     };
-   }
-
-  componentDidMount() {    
-    foursquare.venues.getVenues(params)
-      .then(res=> {
-        this.setState({ locations: res.response.venues });
-      });
-  }
-//-----------test end
-*/
 componentWillReceiveProps({isScriptLoaded,isScriptLoadSucceed}){
   
   if (isScriptLoaded && !this.props.isScriptLoaded) {  //Loud the map
     if (isScriptLoadSucceed) {
-        //var markers = [];
+        
         var map = new window.google.maps.Map(document.getElementById('map'), {
             zoom: 12,
             center: {lat: 25.6872431, lng: 32.6396357}
@@ -129,36 +102,37 @@ componentWillReceiveProps({isScriptLoaded,isScriptLoadSucceed}){
                     title= this.state.locations[i].name;
            
                 let marker = new window.google.maps.Marker({
-                  map: map,
-                  position: position,
-                  title: title,
-                  animation: window.google.maps.Animation.DROP,
-               
-              });            
+                    map: map,
+                    position: position,
+                    title: title,
+                    animation: window.google.maps.Animation.DROP,
+                });            
        
               this.state.markers.push(marker);
        
         //--- When click popup info window
+
         marker.addListener('click', function() {
           populateInfoWindow(this, largeInfowindow);
         });
       
         //--- When click change color of marker
+
         marker.addListener('click', function() {
           this.setIcon(highlightedIcon);
         });
         
         //--- When click focus the same name in list
+
          marker.addListener('click', function() {
-          checkInList(this.title);
+           checkInList(this.title);
         });
-     
-        bounds.extend(this.state.markers[i].position);
+
+
+         bounds.extend(this.state.markers[i].position);
       }
-    
       map.fitBounds(bounds);
-     
-    }
+   }
 
     
     function populateInfoWindow(marker, infowindow) {
@@ -186,42 +160,38 @@ componentWillReceiveProps({isScriptLoaded,isScriptLoadSucceed}){
     }
 
      //--- function to focus the name of clicked marker in the list of restaurants
+
      function checkInList(title) {
-      
       restaurantsList.forEach(function(item){
         if(item.innerHTML === title){
           item.className = 'active' ;
-          setTimeout(function(){
-            item.className='item_name';
-           },2000);  
-     
-        } 
-      }); 
-    } 
-    
-  }
-    else{
-        alert("script not loaded")
-    }
-}
+            setTimeout(function(){
+              item.className='item_name';
+                },2000);  
+              } 
+            }); 
+          }
+          
+          
+    }else{
+      alert("script not loaded")
+      }
+   }
 
 //--- function to focus marker when click the list
 
 focusMarker= (listItem)=>{
   console.log(listItem)
-let newMarker=this.state.markers
-  newMarker.map(marker=>{
-    if(marker.title === listItem.innerHTML) {
-  console.log('mached')
-
-      window.google.maps.event.trigger(marker,'click');
-    
-      }else{
-  console.log('not matched')
-
+    let newMarker=this.state.markers
+      newMarker.map(marker=>{
+        if(marker.title === listItem.innerHTML) {
+          console.log('mached')
+            window.google.maps.event.trigger(marker,'click');    
+        }else{
+          console.log('not matched')
       }
     })
-    console.log(listItem);
+          console.log(listItem);
   }
  
  
@@ -229,11 +199,8 @@ render(){
  
     return(
       <div>
-        {/*<div>
-        <div>Items:</div>
-        { this.state.locations.map(item=> { return <div key={locations.id}>{locations.name}</div>}) }
-        </div>*/}
-       <div className='container'>
+       
+       <div className='container' role='main'>
        
             <List
             setMarker={this.populateInfoWindow} 
@@ -244,6 +211,7 @@ render(){
           <div id="map"></div>
         </div>
         <footer></footer>
+
       </div>
     )
 }
