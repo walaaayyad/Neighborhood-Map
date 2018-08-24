@@ -1,6 +1,6 @@
 
 .container {
-  height: 640px;
+  height: 100%;
   position: relative;
 }
 
@@ -37,7 +37,7 @@ h2 {
 }
 .item_name {
   border: 1px  #b79f9f;
-  margin-top: 15px;
+  margin-top: 7px;
   font-size: 18px;
   font-family: 'Times New Roman', Times, serif;
   width: 80%;
@@ -56,5 +56,24 @@ h2 {
 .active {
   
   font-weight: 2em;
-  color: red;
+  color: brown;
+}
+@media only screen and (max-width: 640px) {
+
+  #map {
+    bottom:65%;
+    height: 35%;
+    width: 100%;
+    position: absolute;
+    
+  }
+  #search {
+    padding: 300px 10px 10px 0px;
+    width: 100%;
+    text-align: center;
+  }
+  .item_name {
+    margin-left: 25px;
+
+  }
 }
