@@ -5,7 +5,9 @@ import sortBy from 'sort-by'
   
 class List extends Component {
   state={
-      query:''
+      query:'',
+      locations:[],
+      markers:[]
   }
 
   updateQuery=(query)=>{
@@ -41,11 +43,12 @@ class List extends Component {
                     <h5 tabIndex='0'>Click on Restaurant Name</h5>
                     </div>
 
-                    <ol className='list' tabIndex='0' aria-lable='restaurant name'>
+                    <ol className='list'  aria-label='restaurant name'>
                         {showingRestaurant.map((item)=> (
                             <li   onClick={(event)=> this.props.focus(event.target)}
                                 className='item_name' 
                                 role='button'
+                                tabIndex='0'
                                 key= {item.id}
                             >
                                 {item.name}  

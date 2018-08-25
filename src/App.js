@@ -3,7 +3,15 @@ import scriptLoader from 'react-async-script-loader';
 import List from './List.js';
 import './App.css';
 
+var foursquare = require('react-foursquare')({
+  clientID: 'PEEZ12FJCFW01QSIIAB1LYP24CDJ0ZCJUDUVQKRFYRQKEZLG',
+  clientSecret: 'E3M5OUVJGXF45JGXLGLQCOHBGLYOWT2QWI2ADV2OZNFIMTWN'  
+});
 
+var params = {
+  "ll": "25.6872431,32.6396357",
+  "query": 'restaurant'
+};
 
 // https://stackoverflow.com/questions/41709765/how-to-load-the-google-maps-api-script-in-my-react-app-only-when-it-is-require
 
@@ -17,71 +25,16 @@ class App extends Component {
 
 state={
 markers:[],
-locations: [
-  {
-      id: "520a4b8793cd8c429aa8f8b7",
-      name: "Olives Restaurant",
-      location:{
-      lat: 25.714606844628456,
-      lng: 32.65145301818848
-      }
-    },
-    {
-      id: "5207a74f0493b6d975d1bf9d",
-      name: "Rossetta Main Dining Restaurant",
-      location:{
-      lat: 25.71752603781213,
-      lng: 32.650465965270996
-      }
-    },
-    {
-      id: "53ce7a19498eccb2e2dc2ea1",
-      name: "Aisha Restaurant",
-      location:{
-      lat: 25.687715530395508,
-      lng: 32.632713317871094
-      }
-    },
-    {
-      id: "4fbe2076e4b0343dfc452a26",
-      name: "Ghazala Restaurant & Cafe",
-      location:{
-      lat: 25.68701944879247,
-      lng: 32.63146834791071
-      }
-    },
-    {
-      id: "56c5f7abcd10e5873b92ee54",
-      name: "Casa Di Napoli restaurant",
-      location:{
-      lat: 25.687305,
-      lng: 32.631357
-      }
-    },
-    {
-      id: "4fc25aeee4b02db73e820744",
-      name: "Oum Hashim Restaurant",
-      location:{
-      lat: 25.702250625145417,
-      lng: 32.6440185132106
-      }
-    },
-    {
-      id: "56c4bfe5cd10583a69b8b452",
-      name: "Nubian restaurant",
-      location:{
-      lat: 25.68757562748794,
-      lng: 32.63099920475835
-      }
-    }
- ]
+locations: []
+
 }
 
+  
 componentWillReceiveProps({isScriptLoaded,isScriptLoadSucceed}){
   
   if (isScriptLoaded && !this.props.isScriptLoaded) {  //Loud the map
     if (isScriptLoadSucceed) {
-        
+      
         var map = new window.google.maps.Map(document.getElementById('map'), {
             zoom: 12,
             center: {lat: 25.6872431, lng: 32.6396357}
@@ -96,8 +49,12 @@ componentWillReceiveProps({isScriptLoaded,isScriptLoadSucceed}){
               bounds = new window.google.maps.LatLngBounds();
           var restaurantsList=document.querySelectorAll('li');
          
-       
+          foursquare.venues.getVenues(params)
+          .then(res=> {
+            this.setState({ locations: res.response.venues });
+          
         for(let i=0; i<this.state.locations.length; i++) {
+          
                 let position= this.state.locations[i].location,
                     title= this.state.locations[i].name;
            
@@ -133,7 +90,7 @@ componentWillReceiveProps({isScriptLoaded,isScriptLoadSucceed}){
       }
       map.fitBounds(bounds);
    }
-
+  )};
     
     function populateInfoWindow(marker, infowindow) {
       
@@ -141,7 +98,10 @@ componentWillReceiveProps({isScriptLoaded,isScriptLoadSucceed}){
         infowindow.marker = marker;
         infowindow.setContent('<div>' + marker.title + '</div>');
         infowindow.open(map, marker);
-      
+        //make marker bounce
+        marker.setAnimation(window.google.maps.Animation.BOUNCE);
+    setTimeout(function(){ marker.setAnimation(null); }, 750);
+       
         infowindow.addListener('closeclick',function(){
           infowindow.setMarker = null;
         });
@@ -172,7 +132,6 @@ componentWillReceiveProps({isScriptLoaded,isScriptLoadSucceed}){
             }); 
           }
           
-          
     }else{
       alert("script not loaded")
       }
@@ -199,7 +158,7 @@ render(){
  
     return(
       <div>
-       
+      
        <div className='container' role='main'>
        
             <List
