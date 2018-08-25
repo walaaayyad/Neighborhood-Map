@@ -21,9 +21,9 @@ class App extends Component {
 
   }
 // Locations From API foursquar
-//https://api.foursquare.com/v2/venues/search?ll=25.6872431,32.6396357&intent=browse&radius=10000&query=restaurant&client_id=PEEZ12FJCFW01QSIIAB1LYP24CDJ0ZCJUDUVQKRFYRQKEZLG&client_secret=E3M5OUVJGXF45JGXLGLQCOHBGLYOWT2QWI2ADV2OZNFIMTWN&v=20180806
 
 state={
+query:'',
 markers:[],
 locations: []
 
@@ -152,7 +152,13 @@ focusMarker= (listItem)=>{
     })
           console.log(listItem);
   }
- 
+ //---test part to filter markers
+  updateMarkers=(query)=>{
+    this.setState({
+        markers: query
+    })
+}
+//----------------
  
 render(){
  
@@ -166,6 +172,7 @@ render(){
             locations={this.state.locations}
             markers={this.state.markers}
             focus={this.focusMarker}
+            updateMarkers={this.updateMarkers}
             />
           <div id="map"></div>
         </div>
