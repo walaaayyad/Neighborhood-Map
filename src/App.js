@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import scriptLoader from 'react-async-script-loader';
 import List from './List.js';
+import escapeRegExp from 'escape-string-regexp'
 import './App.css';
 
 var foursquare = require('react-foursquare')({
@@ -20,9 +21,10 @@ class App extends Component {
     super(props);
 
   }
-// Locations From API foursquar
+// Get Locations From API foursquar
 
 state={
+mapError: false,
 query:'',
 markers:[],
 locations: []
@@ -70,7 +72,7 @@ componentWillReceiveProps({isScriptLoaded,isScriptLoadSucceed}){
         //--- When click popup info window
 
         marker.addListener('click', function() {
-          populateInfoWindow(this, largeInfowindow);
+         populateInfoWindow(this, largeInfowindow);
         });
       
         //--- When click change color of marker
@@ -91,13 +93,14 @@ componentWillReceiveProps({isScriptLoaded,isScriptLoadSucceed}){
       map.fitBounds(bounds);
    }
   )};
-    
+  
     function populateInfoWindow(marker, infowindow) {
-      
+
       if (infowindow.marker !== marker) {
         infowindow.marker = marker;
         infowindow.setContent('<div>' + marker.title + '</div>');
         infowindow.open(map, marker);
+        setTimeout(function(){infowindow.setMarker = null; }, 750);
         //make marker bounce
         marker.setAnimation(window.google.maps.Animation.BOUNCE);
     setTimeout(function(){ marker.setAnimation(null); }, 750);
@@ -106,8 +109,8 @@ componentWillReceiveProps({isScriptLoaded,isScriptLoadSucceed}){
           infowindow.setMarker = null;
         });
       }
-    }
-    
+  }
+ 
     function makeMarkerIcon(markerColor) {
       var markerImage = new window.google.maps.MarkerImage(
         'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
@@ -133,7 +136,7 @@ componentWillReceiveProps({isScriptLoaded,isScriptLoadSucceed}){
           }
           
     }else{
-      alert("script not loaded")
+      alert(" Map not loaded.. Check your connection ") // handel error when map doesn't load
       }
    }
 
@@ -152,13 +155,31 @@ focusMarker= (listItem)=>{
     })
           console.log(listItem);
   }
- //---test part to filter markers
-  updateMarkers=(query)=>{
-    this.setState({
-        markers: query
-    })
-}
-//----------------
+//  filter markers when user enter new value
+
+  updateQuery=(query)=>{
+    const match = new RegExp(escapeRegExp(this.state.query), 'i');
+             let filteredMarkers;
+          this.setState({ query: query }, () => {
+                  if(this.state.query !== '') {
+           filteredMarkers = this.state.markers.filter((marker)=> match.test(marker.title));
+           filteredMarkers.map((marker)=> marker.setVisible(true));
+          console.log(this.state.markers);
+          console.log(filteredMarkers);
+
+                      
+          filteredMarkers = this.state.markers.filter((marker)=> ! (match.test(marker.title)));
+          filteredMarkers.map((marker)=> marker.setVisible(false));
+          console.log(this.state.markers);
+          console.log(filteredMarkers);
+                  }else{
+                    this.state.markers.map((marker)=> marker.setVisible(true));
+                  }
+              })
+
+          }
+        
+
  
 render(){
  
@@ -172,9 +193,19 @@ render(){
             locations={this.state.locations}
             markers={this.state.markers}
             focus={this.focusMarker}
-            updateMarkers={this.updateMarkers}
+            query={this.state.query}
+            onUpdateQuery={this.updateQuery}
+           
             />
-          <div id="map"></div>
+          <div id="map" role='application'>{
+           this.state.mapError?
+            <div id='map-error' role='alert'>
+            Google Map didn't load.. (ERROR)check your connection
+            </div>
+            :<div className='Map Loading'>
+            Google Map is Loading...
+            </div>
+          }</div>
         </div>
         <footer></footer>
 
